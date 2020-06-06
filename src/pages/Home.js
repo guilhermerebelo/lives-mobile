@@ -1,92 +1,106 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View, Button, Alert } from 'react-native';
-import Axios from 'axios';
+import React, { useState, useEffect } from "react";
+import { View, Text, ScrollView, StyleSheet, Button } from "react-native";
 
-// const LIVE = [
-//     {
-//         id: 1,
-//         title: 'a',
-//         link: 'b'
-//     },
-//     {
-//         id: 2,
-//         title: 'a',
-//         link: 'b'
-//     },
-//     {
-//         id: 3,
-//         title: 'a',
-//         link: 'b'
-//     },
-//     {
-//         id: 4,
-//         title: 'a',
-//         link: 'b'
-//     },
-//     {
-//         id: 5,
-//         title: 'a',
-//         link: 'b'
-//     },
-//     {
-//         id: 6,
-//         title: 'a',
-//         link: 'b'
-//     }
-// ]
+import Axios from "axios";
+import moment from "moment";
+
+const DAY = moment().format("YYYY-MM-DD");
+let content = {};
+
+import { Header, ListItem, Icon } from "react-native-elements";
 
 export default function Home() {
-    const [dados, setDados] = useState('teste');
+    let [liveToday, setLiveToday] = useState([]);
 
-    async function get() {
-        Alert.alert('rewre');
-        let template = await Axios.get('https://www.letras.mus.br/blog/lives-da-semana/#livesdasemana')
-        // Alert.prompt(template.toString());
-        // Alert.alert(template.toString());
-        console.log(template);
-        // console.log(typeof template.toJson());
-        // console.log(rep.status)
-        // setDados(rep.status);
+    useEffect(loadStart, []);
+
+    function before() {
+        setLiveToday(content.data[DAY].lives);
+    }
+
+    function after() {
+        let content = setLiveToday(content.data[DAY].lives);
+    }
+
+    async function loadStart() {
+        let content = await Axios.get(
+            "https://raw.githubusercontent.com/guilhermerebelo/json/master/file.json"
+        );
+
+        setLiveToday(content.data["2020-06-01"].lives);
     }
 
     return (
         <>
-            <View style={styles.titleContainer}>
-                <Text style={styles.title}>Lives</Text>
-            </View>
-
-            <Button
-                title='carregar'
-                onPress={() => get()}
+            <Header
+                containerStyle={{ backgroundColor: "#af2b2b" }}
+                leftComponent={{
+                    icon: "left",
+                    color: "#fff",
+                    type: "antdesign",
+                }}
+                rightComponent={{
+                    icon: "right",
+                    color: "#fff",
+                    type: "antdesign",
+                }}
+                centerComponent={{
+                    text: "LIVES SEG 14/05",
+                    style: { color: "#fff" },
+                }}
             />
 
-            <View style={styles.container}>
-                <Text>{dados}</Text>
-            </View>
+            <ScrollView>
+                {liveToday.map((item, index) => (
+                    <ListItem
+                        key={index}
+                        title={item.description}
+                        bottomDivider
+                        rightIcon={{
+                            name: "youtube",
+                            type: "antdesign",
+                            color: "#FF0000",
+                        }}
+                        leftIcon={{
+                            name: "star-outlined",
+                            type: "entypo",
+                            color: "black",
+                        }}
+                    />
+                ))}
+            </ScrollView>
 
-            {/* {dados.map((item, index) => 
-                <View key={index.id} style={styles.container}>
-                    <Text>{item.title}</Text>
-                    <Text>{item.link}</Text>
+            <View style={styles.footer}>
+                <View
+                    style={{
+                        justifyContent: "space-around",
+                        flexDirection: "row",
+                    }}
+                >
+                    <View style={{ paddingTop: 12, height: 50, width: "25%" }}>
+                        <Icon type="fontisto" name="home" color="#78828F" />
+                    </View>
+                    <View style={{ paddingTop: 12, height: 50, width: "25%" }}>
+                        {/* <Icon type="fontisto" name="dollar" color="#78828F" /> */}
+                    </View>
+                    <View style={{ paddingTop: 12, height: 50, width: "25%" }}>
+                        {/* <Icon type="fontisto" name="fire" color="#78828F" /> */}
+                    </View>
+                    <View style={{ paddingTop: 12, height: 50, width: "25%" }}>
+                        {/* <Icon type="fontisto" name="person" color="#78828F" /> */}
+                    </View>
                 </View>
-            )} */}
+            </View>
         </>
     );
 }
 
 const styles = StyleSheet.create({
-    titleContainer: {
-        paddingTop: 30, 
-        height: 100,
-        alignItems: 'center',
-        justifyContent: 'center'
+    footer: {
+        position: "absolute",
+        bottom: 0,
+        height: 50,
+        width: "100%",
+        backgroundColor: "#F9F9F9",
     },
-    title: {
-        fontSize: 30
-    },
-    container: {
-        height: 60,
-        alignItems: 'center'
-    }
 });
-  
