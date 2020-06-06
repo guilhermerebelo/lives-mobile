@@ -1,33 +1,55 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, ScrollView, StyleSheet, Button } from "react-native";
+import GestureRecognizer, {
+    swipeDirections,
+} from "react-native-swipe-gestures";
 
 import Axios from "axios";
-import moment from "moment";
+import moment from "moment/min/moment-with-locales";
+moment.locale("pt-BR");
 
-const DAY = moment().format("YYYY-MM-DD");
-let content = {};
+let DAY = moment().format("YYYY-MM-DD");
+let lives = {};
 
 import { Header, ListItem, Icon } from "react-native-elements";
 
 export default function Home() {
     let [liveToday, setLiveToday] = useState([]);
 
-    useEffect(loadStart, []);
+    useEffect(() => {
+        loadStart();
+    }, []);
 
     function before() {
-        setLiveToday(content.data[DAY].lives);
+        DAY = moment(DAY).subtract(1, "day").format("YYYY-MM-DD");
+
+        if (!lives.data[DAY]) {
+            return;
+        }
+
+        setLiveToday(lives.data[DAY].lives);
     }
 
     function after() {
-        let content = setLiveToday(content.data[DAY].lives);
+        DAY = moment(DAY).add(1, "day").format("YYYY-MM-DD");
+
+        if (!lives.data[DAY]) {
+            return;
+        }
+
+        setLiveToday(lives.data[DAY].lives);
     }
 
     async function loadStart() {
-        let content = await Axios.get(
+        lives = await Axios.get(
             "https://raw.githubusercontent.com/guilhermerebelo/json/master/file.json"
         );
 
-        setLiveToday(content.data["2020-06-01"].lives);
+        setLiveToday(content.data[DAY].lives);
+    }
+
+    function getDay() {
+        return moment(DAY).format("dddd").toUpperCase();
     }
 
     return (
@@ -38,14 +60,16 @@ export default function Home() {
                     icon: "left",
                     color: "#fff",
                     type: "antdesign",
+                    onPress: before,
                 }}
                 rightComponent={{
                     icon: "right",
                     color: "#fff",
                     type: "antdesign",
+                    onPress: after,
                 }}
                 centerComponent={{
-                    text: "LIVES SEG 14/05",
+                    text: `LIVES ${getDay()} ${moment(DAY).format("DD/MM")}`,
                     style: { color: "#fff" },
                 }}
             />
@@ -54,7 +78,7 @@ export default function Home() {
                 {liveToday.map((item, index) => (
                     <ListItem
                         key={index}
-                        title={item.description}
+                        title={`${item.horario} - ${item.description}`}
                         bottomDivider
                         rightIcon={{
                             name: "youtube",
@@ -62,45 +86,13 @@ export default function Home() {
                             color: "#FF0000",
                         }}
                         leftIcon={{
-                            name: "star-outlined",
-                            type: "entypo",
+                            name: "clock",
+                            type: "feather",
                             color: "black",
                         }}
                     />
                 ))}
             </ScrollView>
-
-            <View style={styles.footer}>
-                <View
-                    style={{
-                        justifyContent: "space-around",
-                        flexDirection: "row",
-                    }}
-                >
-                    <View style={{ paddingTop: 12, height: 50, width: "25%" }}>
-                        <Icon type="fontisto" name="home" color="#78828F" />
-                    </View>
-                    <View style={{ paddingTop: 12, height: 50, width: "25%" }}>
-                        {/* <Icon type="fontisto" name="dollar" color="#78828F" /> */}
-                    </View>
-                    <View style={{ paddingTop: 12, height: 50, width: "25%" }}>
-                        {/* <Icon type="fontisto" name="fire" color="#78828F" /> */}
-                    </View>
-                    <View style={{ paddingTop: 12, height: 50, width: "25%" }}>
-                        {/* <Icon type="fontisto" name="person" color="#78828F" /> */}
-                    </View>
-                </View>
-            </View>
         </>
     );
 }
-
-const styles = StyleSheet.create({
-    footer: {
-        position: "absolute",
-        bottom: 0,
-        height: 50,
-        width: "100%",
-        backgroundColor: "#F9F9F9",
-    },
-});
