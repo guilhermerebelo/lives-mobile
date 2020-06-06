@@ -1,27 +1,33 @@
+const URL_GIT =
+    "https://raw.githubusercontent.com/guilhermerebelo/json/master/file.json";
+const LOCAL_DATE = "YYYY-MM-DD";
+
+import * as Linking from "expo-linking";
+
 import React, { useState, useEffect } from "react";
 import { View, Text, ScrollView, StyleSheet, Button } from "react-native";
-import GestureRecognizer, {
-    swipeDirections,
-} from "react-native-swipe-gestures";
+import GestureRecognizer from "react-native-swipe-gestures";
+import Spinner from "react-native-loading-spinner-overlay";
 
 import Axios from "axios";
 import moment from "moment/min/moment-with-locales";
 moment.locale("pt-BR");
 
-let DAY = moment().format("YYYY-MM-DD");
+let DAY = moment().format(LOCAL_DATE);
 let lives = {};
 
 import { Header, ListItem, Icon } from "react-native-elements";
 
 export default function Home() {
     let [liveToday, setLiveToday] = useState([]);
+    let [tracker, setTracker] = useState(false);
 
     useEffect(() => {
         loadStart();
     }, []);
 
     function before() {
-        DAY = moment(DAY).subtract(1, "day").format("YYYY-MM-DD");
+        DAY = moment(DAY).subtract(1, "day").format(LOCAL_DATE);
 
         if (!lives.data[DAY]) {
             return;
@@ -40,12 +46,13 @@ export default function Home() {
         setLiveToday(lives.data[DAY].lives);
     }
 
-    async function loadStart() {
-        lives = await Axios.get(
-            "https://raw.githubusercontent.com/guilhermerebelo/json/master/file.json"
-        );
+    function goYoutube(url) {
+        Linking.openURL(url);
+    }
 
-        setLiveToday(content.data[DAY].lives);
+    async function loadStart() {
+        lives = await Axios.get(URL_GIT);
+        setLiveToday(lives.data[DAY].lives);
     }
 
     function getDay() {
@@ -54,45 +61,47 @@ export default function Home() {
 
     return (
         <>
-            <Header
-                containerStyle={{ backgroundColor: "#af2b2b" }}
-                leftComponent={{
-                    icon: "left",
-                    color: "#fff",
-                    type: "antdesign",
-                    onPress: before,
-                }}
-                rightComponent={{
-                    icon: "right",
-                    color: "#fff",
-                    type: "antdesign",
-                    onPress: after,
-                }}
-                centerComponent={{
-                    text: `LIVES ${getDay()} ${moment(DAY).format("DD/MM")}`,
-                    style: { color: "#fff" },
-                }}
-            />
+            <Spinner visible={tracker} />
+            <GestureRecognizer onSwipeLeft={after} onSwipeRight={before}>
+                <Header
+                    containerStyle={{ backgroundColor: "#af2b2b" }}
+                    leftComponent={{
+                        icon: "left",
+                        color: "#fff",
+                        type: "antdesign",
+                        onPress: before,
+                    }}
+                    rightComponent={{
+                        icon: "right",
+                        color: "#fff",
+                        type: "antdesign",
+                        onPress: after,
+                    }}
+                    centerComponent={{
+                        text: `LIVES ${getDay()} ${moment(DAY).format(
+                            "DD/MM"
+                        )}`,
+                        style: { color: "#fff" },
+                    }}
+                />
 
-            <ScrollView>
-                {liveToday.map((item, index) => (
-                    <ListItem
-                        key={index}
-                        title={`${item.horario} - ${item.description}`}
-                        bottomDivider
-                        rightIcon={{
-                            name: "youtube",
-                            type: "antdesign",
-                            color: "#FF0000",
-                        }}
-                        leftIcon={{
-                            name: "clock",
-                            type: "feather",
-                            color: "black",
-                        }}
-                    />
-                ))}
-            </ScrollView>
+                <ScrollView>
+                    {liveToday.map((item, index) => (
+                        <ListItem
+                            key={index}
+                            title={`${item.horario} - ${item.description}`}
+                            bottomDivider
+                            // chevron={{ onPress: () => console.log("aa") }}
+                            rightIcon={{
+                                name: "youtube",
+                                type: "antdesign",
+                                color: "#FF0000",
+                                onPress: () => goYoutube(item.link),
+                            }}
+                        />
+                    ))}
+                </ScrollView>
+            </GestureRecognizer>
         </>
     );
 }
