@@ -1,21 +1,7 @@
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React from "react";
 
-import Home from './src/pages/Home'
+import Routes from "./src/routes";
 
 export default function App() {
-  return (
-    <>
-      <Home></Home>
-    </>
-  );
+    return <Routes />;
 }
-
-const styles = StyleSheet.create({
-  container: {
-    height: 150,
-    backgroundColor: 'red',
-    alignItems: 'center',
-    justifyContent: 'center',
-  }
-});

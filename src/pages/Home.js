@@ -8,6 +8,7 @@ import React, { useState, useEffect } from "react";
 import { View, Text, ScrollView, StyleSheet, Button } from "react-native";
 import GestureRecognizer from "react-native-swipe-gestures";
 import Spinner from "react-native-loading-spinner-overlay";
+import { useNavigation } from "@react-navigation/native";
 
 import Axios from "axios";
 import moment from "moment/min/moment-with-locales";
@@ -22,9 +23,15 @@ export default function Home() {
     let [liveToday, setLiveToday] = useState([]);
     let [tracker, setTracker] = useState(false);
 
+    const navigation = useNavigation();
+
     useEffect(() => {
         loadStart();
     }, []);
+
+    function viewDetails() {
+        navigation.navigate("Detail");
+    }
 
     function before() {
         DAY = moment(DAY).subtract(1, "day").format(LOCAL_DATE);
@@ -85,20 +92,37 @@ export default function Home() {
                     }}
                 />
 
-                <ScrollView>
+                <ScrollView
+                    scrollEnabled={true}
+                    contentContainerStyle={{ flexGrow: 1 }}
+                >
                     {liveToday.map((item, index) => (
-                        <ListItem
-                            key={index}
-                            title={`${item.horario} - ${item.description}`}
-                            bottomDivider
-                            // chevron={{ onPress: () => console.log("aa") }}
-                            rightIcon={{
-                                name: "youtube",
-                                type: "antdesign",
-                                color: "#FF0000",
-                                onPress: () => goYoutube(item.link),
-                            }}
-                        />
+                        <>
+                            <ListItem
+                                key={index}
+                                title={`${item.horario} - ${item.description}`}
+                                bottomDivider
+                                chevron={{ onPress: () => viewDetails() }}
+                                rightIcon={{
+                                    name: "youtube",
+                                    type: "antdesign",
+                                    color: "#FF0000",
+                                    onPress: () => goYoutube(item.link),
+                                }}
+                            />
+                            <ListItem
+                                key={index}
+                                title={`${item.horario} - ${item.description}`}
+                                bottomDivider
+                                chevron={{ onPress: () => viewDetails() }}
+                                rightIcon={{
+                                    name: "youtube",
+                                    type: "antdesign",
+                                    color: "#FF0000",
+                                    onPress: () => goYoutube(item.link),
+                                }}
+                            />
+                        </>
                     ))}
                 </ScrollView>
             </GestureRecognizer>
