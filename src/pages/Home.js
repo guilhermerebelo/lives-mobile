@@ -107,18 +107,6 @@ export default function Home() {
                                     onPress: () => goYoutube(item.link),
                                 }}
                             />
-                            <ListItem
-                                key={index}
-                                title={`${item.horario} - ${item.description}`}
-                                bottomDivider
-                                chevron={{ onPress: () => viewDetails() }}
-                                rightIcon={{
-                                    name: "youtube",
-                                    type: "antdesign",
-                                    color: "#FF0000",
-                                    onPress: () => goYoutube(item.link),
-                                }}
-                            />
                         </>
                     ))}
                 </ScrollView>
