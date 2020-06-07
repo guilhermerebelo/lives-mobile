@@ -92,10 +92,7 @@ export default function Home() {
                     }}
                 />
 
-                <ScrollView
-                    scrollEnabled={true}
-                    contentContainerStyle={{ flexGrow: 1 }}
-                >
+                <ScrollView>
                     {liveToday.map((item, index) => (
                         <>
                             <ListItem
