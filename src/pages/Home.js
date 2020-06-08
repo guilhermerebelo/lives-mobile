@@ -7,7 +7,6 @@ import * as Linking from "expo-linking";
 import React, { useState, useEffect } from "react";
 import { View, Text, ScrollView, StyleSheet, Button } from "react-native";
 import GestureRecognizer from "react-native-swipe-gestures";
-import Spinner from "react-native-loading-spinner-overlay";
 import { useNavigation } from "@react-navigation/native";
 
 import Axios from "axios";
@@ -21,7 +20,6 @@ import { Header, ListItem, Icon } from "react-native-elements";
 
 export default function Home() {
     let [liveToday, setLiveToday] = useState([]);
-    let [tracker, setTracker] = useState(false);
 
     const navigation = useNavigation();
 
@@ -68,7 +66,6 @@ export default function Home() {
 
     return (
         <>
-            <Spinner visible={tracker} />
             <GestureRecognizer onSwipeLeft={after} onSwipeRight={before}>
                 <Header
                     containerStyle={{ backgroundColor: "#af2b2b" }}
