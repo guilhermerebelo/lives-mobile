@@ -1,5 +1,3 @@
-const URL_GIT =
-    "https://raw.githubusercontent.com/guilhermerebelo/json/master/file.json";
 const LOCAL_DATE = "YYYY-MM-DD";
 
 import * as Linking from "expo-linking";
@@ -10,65 +8,66 @@ import GestureRecognizer from "react-native-swipe-gestures";
 import Spinner from "react-native-loading-spinner-overlay";
 import { useNavigation } from "@react-navigation/native";
 
-import Axios from "axios";
 import moment from "moment/min/moment-with-locales";
 moment.locale("pt-BR");
 
-let DAY = moment().format(LOCAL_DATE);
+// let DAY = moment().format(LOCAL_DATE);
 let lives = {};
 
 import { Header, ListItem, Icon } from "react-native-elements";
 
-export default function Home() {
-    let [liveToday, setLiveToday] = useState([]);
-    let [tracker, setTracker] = useState(false);
+export default function Home({ route }) {
+    const lives = route.params.lives[route.params.date].lives;
+    console.log("testeee");
 
     const navigation = useNavigation();
-
-    useEffect(() => {
-        loadStart();
-    }, []);
 
     function viewDetails(item) {
         navigation.navigate("Detail", item);
     }
 
     function before() {
-        DAY = moment(DAY).subtract(1, "day").format(LOCAL_DATE);
+        let date = moment(route.params.date)
+            .subtract(1, "day")
+            .format(LOCAL_DATE);
 
-        if (!lives.data[DAY]) {
-            return;
-        }
+        navigation.navigate("Home", {
+            ...route.params.lives,
+            date,
+        });
 
-        setLiveToday(lives.data[DAY].lives);
+        // if (!lives.data[DAY]) {
+        //     return;
+        // }
+
+        // setLiveToday(lives.data[DAY].lives);
     }
 
     function after() {
-        DAY = moment(DAY).add(1, "day").format("YYYY-MM-DD");
+        let date = moment(route.params.date).add(1, "day").format(LOCAL_DATE);
 
-        if (!lives.data[DAY]) {
-            return;
-        }
+        navigation.navigate("Home", {
+            ...route.params.lives,
+            date,
+        });
 
-        setLiveToday(lives.data[DAY].lives);
+        // if (!lives.data[DAY]) {
+        //     return;
+        // }
+
+        // setLiveToday(lives.data[DAY].lives);
     }
 
     function goYoutube(url) {
         Linking.openURL(url);
     }
 
-    async function loadStart() {
-        lives = await Axios.get(URL_GIT);
-        setLiveToday(lives.data[DAY].lives);
-    }
-
     function getDay() {
-        return moment(DAY).format("dddd").toUpperCase();
+        return moment(route.params.date).format("dddd").toUpperCase();
     }
 
     return (
         <>
-            <Spinner visible={tracker} />
             <GestureRecognizer onSwipeLeft={after} onSwipeRight={before}>
                 <Header
                     containerStyle={{ backgroundColor: "#af2b2b" }}
@@ -85,15 +84,15 @@ export default function Home() {
                         onPress: after,
                     }}
                     centerComponent={{
-                        text: `LIVES ${getDay()} ${moment(DAY).format(
-                            "DD/MM"
-                        )}`,
+                        text: `LIVES ${getDay()} ${moment(
+                            route.params.date
+                        ).format("DD/MM")}`,
                         style: { color: "#fff" },
                     }}
                 />
 
                 <ScrollView>
-                    {liveToday.map((item, index) => (
+                    {lives.map((item, index) => (
                         <>
                             <ListItem
                                 key={index}
