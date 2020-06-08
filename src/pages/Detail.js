@@ -7,10 +7,8 @@ import GestureRecognizer from "react-native-swipe-gestures";
 
 import { useNavigation } from "@react-navigation/native";
 
-export default function Detail() {
-    let [valor, setValor] = useState();
-
-    useEffect(() => setValor("aaaa"), [valor]);
+export default function Detail({ route }) {
+    const { params } = route;
 
     const navigation = useNavigation();
 
@@ -33,7 +31,9 @@ export default function Detail() {
                     style: { color: "#fff" },
                 }}
             />
-            <Text>{valor}</Text>
+            <Text>{params.horario}</Text>
+            <Text>{params.description}</Text>
+            <Text>{params.link}</Text>
         </GestureRecognizer>
     );
 }

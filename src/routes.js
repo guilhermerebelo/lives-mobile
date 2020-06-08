@@ -6,7 +6,6 @@ const AppStack = createStackNavigator();
 
 import Home from "./pages/Home";
 import Detail from "./pages/Detail";
-
 export default function Routes() {
     return (
         <NavigationContainer>

@@ -29,8 +29,8 @@ export default function Home() {
         loadStart();
     }, []);
 
-    function viewDetails() {
-        navigation.navigate("Detail");
+    function viewDetails(item) {
+        navigation.navigate("Detail", item);
     }
 
     function before() {
@@ -99,7 +99,7 @@ export default function Home() {
                                 key={index}
                                 title={`${item.horario} - ${item.description}`}
                                 bottomDivider
-                                chevron={{ onPress: () => viewDetails() }}
+                                chevron={{ onPress: () => viewDetails(item) }}
                                 rightIcon={{
                                     name: "youtube",
                                     type: "antdesign",
