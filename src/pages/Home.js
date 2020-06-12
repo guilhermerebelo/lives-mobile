@@ -14,7 +14,9 @@ import moment from "moment/min/moment-with-locales";
 moment.locale("pt-BR");
 
 let DAY = moment().format(LOCAL_DATE);
-let lives = {};
+
+import data from "./Helper";
+let lives = { data };
 
 import { Header, ListItem, Icon } from "react-native-elements";
 
@@ -42,7 +44,7 @@ export default function Home() {
     }
 
     function after() {
-        DAY = moment(DAY).add(1, "day").format("YYYY-MM-DD");
+        DAY = moment(DAY).add(1, "day").format(LOCAL_DATE);
 
         if (!lives.data[DAY]) {
             return;
@@ -56,7 +58,7 @@ export default function Home() {
     }
 
     async function loadStart() {
-        lives = await Axios.get(URL_GIT);
+        // lives = await Axios.get(URL_GIT);
         setLiveToday(lives.data[DAY].lives);
     }
 
@@ -91,21 +93,18 @@ export default function Home() {
 
                 <ScrollView>
                     {liveToday.map((item, index) => (
-                        <>
-                            <ListItem
-                                key={index}
-                                title={`${item.horario} - ${item.description}`}
-                                bottomDivider
-                                chevron={{ onPress: () => viewDetails(item) }}
-                                rightIcon={{
-                                    name: "youtube",
-                                    type: "antdesign",
-                                    color: "#FF0000",
-                                    onPress: () => goYoutube(item.link),
-                                }}
-                            />
-                        </>
+                        <ListItem
+                            key={index}
+                            title={`${item.horario} - ${item.description}`}
+                            bottomDivider
+                            chevron={{ onPress: () => viewDetails(item) }}
+                            rightIcon={{
+                                name: "bell-off",
+                                type: "feather",
+                            }}
+                        />
                     ))}
+                    <View style={{ height: 30 }}></View>
                 </ScrollView>
             </GestureRecognizer>
         </>
