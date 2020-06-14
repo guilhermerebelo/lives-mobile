@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, TouchableOpacity, Text, Image } from "react-native";
+import { View, TouchableOpacity, Text, Image, AsyncStorage } from "react-native";
 import { Card, Header, Icon } from "react-native-elements";
 import * as Linking from "expo-linking";
 import { useNavigation } from "@react-navigation/native";
@@ -20,18 +20,39 @@ const TIPO_AVISO = {
 };
 
 export default function Detail({ route }) {
-    const navigation = useNavigation();
     const { params } = route;
+    const navigation = useNavigation();
+    const slote = `${params.dia}-${params.description}`
+    // const avisoStart = getItem() || false
 
     let [aviso, setAviso] = useState(false);
+
+    useEffect(() => {
+        getItem(slote, (aviso) => setAviso(aviso || false))
+    }, [])
 
     function backRouter() {
         navigation.navigate("Home");
     }
 
-    function changeAviso() {
-        setAviso((aviso = !aviso));
-        console.log(aviso);
+    function saveLive() {
+        if (aviso) {
+            AsyncStorage.removeItem(slote, () => {
+                setAviso(!aviso)
+
+                console.log(aviso);
+            })
+        } else {
+            AsyncStorage.setItem(slote, !aviso, () => {
+                setAviso(!aviso)
+
+                console.log(aviso);
+            })
+        }
+    }
+
+    async function getItem() {
+        return await AsyncStorage.getItem(slote)
     }
 
     function goYoutube(url) {
@@ -143,7 +164,7 @@ export default function Detail({ route }) {
 
             <Card containerStyle={{ paddingTop: 30, paddingBottom: 30 }}>
                 <TouchableOpacity
-                    onPress={() => changeAviso()}
+                    onPress={() => saveLive()}
                     style={{ alignItems: "center", flexDirection: "row" }}
                 >
                     <View style={{ flex: 1 }}>{TIPO_AVISO[aviso].icon()}</View>
