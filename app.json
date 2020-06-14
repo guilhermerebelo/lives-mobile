@@ -1,5 +1,6 @@
 {
   "expo": {
+    "primaryColor": "#ffffff",
     "name": "Live hoje",
     "slug": "lives",
     "platforms": [

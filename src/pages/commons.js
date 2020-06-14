@@ -1,20 +1,28 @@
 const URL_GIT = "https://raw.githubusercontent.com/guilhermerebelo/json/master/file.json";
 const LOCAL_DATE = "YYYY-MM-DD";
 
+const color = "#ecb84a";
+
+// e9a514
+// f4c96d
+
 import moment from "moment/min/moment-with-locales";
 import axios from "axios";
+import data from "./helper";
 
 moment.locale("pt-BR");
 
 export default {
     // request
     axios,
-    listAll: () => axios.get(URL_GIT),
+    listAll: () => { return { data } },
 
     // moment
     moment,
     getDay: () => moment().format(LOCAL_DATE),
     subtractDay: (day) => moment(day).subtract(1, "day").format(LOCAL_DATE),
     addDay: (day) => moment(day).add(1, "day").format(LOCAL_DATE),
-    format: (day, format) => moment(day).format(format)
+    format: (day, format) => moment(day).format(format),
+
+    color
 }

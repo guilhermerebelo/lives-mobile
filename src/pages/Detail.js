@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { View, TouchableOpacity, Text } from "react-native";
+import { View, TouchableOpacity, Text, Image } from "react-native";
 import { Card, Header, Icon } from "react-native-elements";
-
 import * as Linking from "expo-linking";
-
-import Style from "./Style";
-
-import moment from "moment/min/moment-with-locales";
-moment.locale("pt-BR");
-
 import { useNavigation } from "@react-navigation/native";
+
+import $commons from "./commons";
+
+import Logo from "../../assets/icon.png"
 
 const TIPO_AVISO = {
     false: {
@@ -23,18 +20,13 @@ const TIPO_AVISO = {
 };
 
 export default function Detail({ route }) {
-    let [aviso, setAviso] = useState(false);
-
+    const navigation = useNavigation();
     const { params } = route;
 
-    const navigation = useNavigation();
+    let [aviso, setAviso] = useState(false);
 
     function backRouter() {
         navigation.navigate("Home");
-    }
-
-    function getDay(day) {
-        return moment(day).format("dddd").toUpperCase();
     }
 
     function changeAviso() {
@@ -46,19 +38,30 @@ export default function Detail({ route }) {
         Linking.openURL(url);
     }
 
+    const LeftComponenttHeader = () => {
+        return (
+            <Icon size={40} color="#fff" name="chevron-left" type="entypo" onPress={backRouter} />
+        )
+    }
+
+    const CenterComponentHeader = () => {
+        return (
+            <Image
+                style={{ width: 160, height: 160 }}
+                source={Logo}
+            />
+        )
+    }
+
     return (
         <>
             <Header
-                containerStyle={{ backgroundColor: "#af2b2b" }}
-                leftComponent={{
-                    icon: "left",
-                    color: "#fff",
-                    type: "antdesign",
-                    onPress: backRouter,
-                }}
-                centerComponent={{
-                    text: "DADOS DA LIVE",
-                    style: { color: "#fff" },
+                leftComponent={<LeftComponenttHeader />}
+                centerComponent={<CenterComponentHeader />}
+                linearGradientProps={{
+                    colors: ['#e9a514', '#f4c96d'],
+                    start: { x: 0.5, y: 0.5 },
+                    end: { x: 1, y: 1 },
                 }}
             />
 
@@ -67,7 +70,7 @@ export default function Detail({ route }) {
                     <View style={{ flex: 1 }}>
                         <Icon
                             size={35}
-                            style={Style.iconBoxPosistionDetail}
+                            style={{ width: "85%", fontSize: 18 }}
                             type="material-community"
                             name="artist"
                         />
@@ -115,7 +118,7 @@ export default function Detail({ route }) {
                             />
                         </View>
                         <Text style={{ flex: 4, fontSize: 15 }}>
-                            {getDay(params.dia)}
+                            {$commons.format(params.dia, "dddd").toUpperCase()}
                         </Text>
                     </View>
                 </View>

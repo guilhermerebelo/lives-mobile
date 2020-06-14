@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, ScrollView, StyleSheet, Button } from "react-native";
+import { View, Text, ScrollView, Image, TouchableOpacity } from "react-native";
 import GestureRecognizer from "react-native-swipe-gestures";
 import { useNavigation } from "@react-navigation/native";
 import { Header, ListItem, Icon } from "react-native-elements";
 
-import $commons from "./Commons";
+import $commons from "./commons";
+
+import Logo from "../../assets/icon.png"
+
+let lives = {};
+let day = $commons.getDay();
 
 export default function Home() {
-    let lives = {};
-    let day = $commons.getDay();
-
     let [liveToday, setLiveToday] = useState([]);
 
     const navigation = useNavigation();
@@ -33,7 +35,7 @@ export default function Home() {
     }
 
     function after() {
-        day = $commons.add(day);
+        day = $commons.addDay(day);
 
         if (!lives.data[day]) {
             return;
@@ -42,8 +44,8 @@ export default function Home() {
         setLiveToday(lives.data[day].lives);
     }
 
-    async function loadStart() {
-        lives = await $commons.listAll();
+    function loadStart() {
+        lives = $commons.listAll();
         setLiveToday(lives.data[day].lives);
     }
 
@@ -51,45 +53,61 @@ export default function Home() {
         return $commons.format(day, 'dddd').toUpperCase();
     }
 
+    const LeftComponenttHeader = () => {
+        return (
+            <Icon size={40} color="#fff" name="chevron-left" type="entypo" onPress={before} />
+        )
+    }
+
+    const RightComponenttHeader = () => {
+        return (
+            <Icon size={40} color="#fff" name="chevron-right" type="entypo" onPress={after} />
+        )
+    }
+
+    const CenterComponentHeader = () => {
+        return (
+            <Image
+                style={{ width: 160, height: 160 }}
+                source={Logo}
+            />
+        )
+    }
+
     return (
         <>
-            <GestureRecognizer onSwipeLeft={after} onSwipeRight={before}>
+            <ScrollView>
+                {/* <GestureRecognizer onSwipeLeft={after} onSwipeRight={before}> */}
                 <Header
-                    containerStyle={{ backgroundColor: "#af2b2b" }}
-                    leftComponent={{
-                        icon: "left",
-                        color: "#fff",
-                        type: "antdesign",
-                        onPress: before,
-                    }}
-                    rightComponent={{
-                        icon: "right",
-                        color: "#fff",
-                        type: "antdesign",
-                        onPress: after,
-                    }}
-                    centerComponent={{
-                        text: `LIVES ${getDay()} ${$commons.format(day, "DD/MM")}`,
-                        style: { color: "#fff" },
+                    leftComponent={<LeftComponenttHeader />}
+                    rightComponent={<RightComponenttHeader />}
+                    centerComponent={<CenterComponentHeader />}
+                    linearGradientProps={{
+                        colors: ['#e9a514', '#f4c96d'],
+                        start: { x: 0.5, y: 0.5 },
+                        end: { x: 1, y: 1 },
                     }}
                 />
 
-                <ScrollView>
-                    {liveToday.map((item, index) => (
-                        <ListItem
-                            key={index}
-                            title={`${item.horario} - ${item.description}`}
-                            bottomDivider
-                            chevron={{ onPress: () => viewDetails(item) }}
-                            rightIcon={{
-                                name: "bell-off",
-                                type: "feather",
-                            }}
-                        />
-                    ))}
-                    <View style={{ height: 30 }}></View>
-                </ScrollView>
-            </GestureRecognizer>
+                <Text style={{ textAlign: "center", marginTop: 15, marginBottom: 5, fontSize: 18, color: "#575757" }}>
+                    {`${$commons.format(day, "DD/MM")} - ${getDay()}`}
+                </Text>
+
+
+                {liveToday.map((item, index) => (
+                    <ListItem
+                        key={index}
+                        title={`${item.horario} - ${item.description}`}
+                        bottomDivider
+                        chevron={{ onPress: () => viewDetails(item) }}
+                        rightIcon={{
+                            name: "bell-off",
+                            type: "feather",
+                        }}
+                    />
+                ))}
+                {/* </GestureRecognizer> */}
+            </ScrollView>
         </>
     );
 }
