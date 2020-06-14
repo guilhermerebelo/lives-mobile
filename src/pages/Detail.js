@@ -1,13 +1,6 @@
 import React, { useState, useEffect } from "react";
-import {
-    View,
-    TouchableOpacity,
-    Text,
-    ScrollView,
-    StyleSheet,
-    Button,
-} from "react-native";
-import { Card, Divider, Header, ListItem, Icon } from "react-native-elements";
+import { View, TouchableOpacity, Text } from "react-native";
+import { Card, Header, Icon } from "react-native-elements";
 
 import * as Linking from "expo-linking";
 
@@ -15,9 +8,6 @@ import Style from "./Style";
 
 import moment from "moment/min/moment-with-locales";
 moment.locale("pt-BR");
-
-// nao consegui utlizar
-import GestureRecognizer from "react-native-swipe-gestures";
 
 import { useNavigation } from "@react-navigation/native";
 

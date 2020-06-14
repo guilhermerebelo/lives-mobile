@@ -1,26 +1,15 @@
-const URL_GIT =
-    "https://raw.githubusercontent.com/guilhermerebelo/json/master/file.json";
-const LOCAL_DATE = "YYYY-MM-DD";
-
-import * as Linking from "expo-linking";
-
 import React, { useState, useEffect } from "react";
 import { View, Text, ScrollView, StyleSheet, Button } from "react-native";
 import GestureRecognizer from "react-native-swipe-gestures";
 import { useNavigation } from "@react-navigation/native";
-
-import Axios from "axios";
-import moment from "moment/min/moment-with-locales";
-moment.locale("pt-BR");
-
-let DAY = moment().format(LOCAL_DATE);
-
-import data from "./Helper";
-let lives = { data };
-
 import { Header, ListItem, Icon } from "react-native-elements";
 
+import $commons from "./Commons";
+
 export default function Home() {
+    let lives = {};
+    let day = $commons.getDay();
+
     let [liveToday, setLiveToday] = useState([]);
 
     const navigation = useNavigation();
@@ -34,36 +23,32 @@ export default function Home() {
     }
 
     function before() {
-        DAY = moment(DAY).subtract(1, "day").format(LOCAL_DATE);
+        day = $commons.subtractDay(day);
 
-        if (!lives.data[DAY]) {
+        if (!lives.data[day]) {
             return;
         }
 
-        setLiveToday(lives.data[DAY].lives);
+        setLiveToday(lives.data[day].lives);
     }
 
     function after() {
-        DAY = moment(DAY).add(1, "day").format(LOCAL_DATE);
+        day = $commons.add(day);
 
-        if (!lives.data[DAY]) {
+        if (!lives.data[day]) {
             return;
         }
 
-        setLiveToday(lives.data[DAY].lives);
-    }
-
-    function goYoutube(url) {
-        Linking.openURL(url);
+        setLiveToday(lives.data[day].lives);
     }
 
     async function loadStart() {
-        // lives = await Axios.get(URL_GIT);
-        setLiveToday(lives.data[DAY].lives);
+        lives = await $commons.listAll();
+        setLiveToday(lives.data[day].lives);
     }
 
     function getDay() {
-        return moment(DAY).format("dddd").toUpperCase();
+        return $commons.format(day, 'dddd').toUpperCase();
     }
 
     return (
@@ -84,9 +69,7 @@ export default function Home() {
                         onPress: after,
                     }}
                     centerComponent={{
-                        text: `LIVES ${getDay()} ${moment(DAY).format(
-                            "DD/MM"
-                        )}`,
+                        text: `LIVES ${getDay()} ${$commons.format(day, "DD/MM")}`,
                         style: { color: "#fff" },
                     }}
                 />
