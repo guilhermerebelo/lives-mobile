@@ -10,11 +10,11 @@ import Logo from "../../assets/icon.png"
 
 const TIPO_AVISO = {
     false: {
-        mensagem: "Me avise quando começar",
+        mensagem: "ME AVISE QUANDO COMEÇAR",
         icon: () => <Icon size={35} name="bell-off" type="feather" />,
     },
     true: {
-        mensagem: "Voce será notificado",
+        mensagem: "VOCÊ SERA NOTIFICADO",
         icon: () => <Icon size={35} name="bell" type="feather" />,
     },
 };
@@ -23,7 +23,6 @@ export default function Detail({ route }) {
     const { params } = route;
     const navigation = useNavigation();
     const slote = `${params.dia}-${params.description}`
-    // const avisoStart = getItem() || false
 
     let [aviso, setAviso] = useState(false);
 
@@ -39,14 +38,10 @@ export default function Detail({ route }) {
         if (aviso) {
             AsyncStorage.removeItem(slote, () => {
                 setAviso(!aviso)
-
-                console.log(aviso);
             })
         } else {
             AsyncStorage.setItem(slote, !aviso, () => {
                 setAviso(!aviso)
-
-                console.log(aviso);
             })
         }
     }
@@ -158,7 +153,7 @@ export default function Detail({ route }) {
                             color="#FF0000"
                         />
                     </View>
-                    <Text style={{ flex: 2 }}>Clique para assistir</Text>
+                    <Text style={{ flex: 2 }}>CLIQUE PARA ASSISTIR</Text>
                 </TouchableOpacity>
             </Card>
 
